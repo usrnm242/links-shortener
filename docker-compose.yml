@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+
+  django_server:
+    container_name: django_server
+    build: shorten_link/
+    security_opt:
+      - seccomp:./default_seccomp.json
+    restart: always
+    command: uwsgi uwsgi_conf.ini
+    ports:
+      - 80:8090
+    links:
+      - mysql:mysql
+    volumes:
+      - ./shorten_link:/usr/src/shorten_link:ro
+    environment:
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_user_password
+      MYSQL_DATABASE: shortener
+      MYSQL_HOST: mysql
+      SERVER_ADDR: 0.0.0.0
+
+  mysql:
+    image: mysql:8.0.20
+    container_name: mysql
+    security_opt:
+      - seccomp:./default_seccomp.json
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/:ro
+    command: [--default-authentication-plugin=mysql_native_password]
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_user_password
+      MYSQL_DATABASE: shortener
