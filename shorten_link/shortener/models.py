@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.db import models
-from django.utils import timezone
 from django.core.validators import URLValidator
 from hashids import Hashids
 from os import environ

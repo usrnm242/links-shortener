@@ -21,7 +21,8 @@ services:
       MYSQL_PASSWORD: my_user_password
       MYSQL_DATABASE: shortener
       MYSQL_HOST: mysql
-      SERVER_ADDR: 0.0.0.0
+      SERVER_ADDR: 127.0.0.1
+      REDIS_HOST: redis://redis:6379/0
 
   mysql:
     image: mysql:8.0.20
@@ -42,10 +43,10 @@ services:
 
   redis:
     image: redis:4.0.5-alpine
+    container_name: redis
+    security_opt:
+      - seccomp:./default_seccomp.json
     command: ["redis-server", "--appendonly", "yes"]
     hostname: redis
     ports:
       - "6379:6379"
-
-    # volumes:
-    #   - redis-data:/data
