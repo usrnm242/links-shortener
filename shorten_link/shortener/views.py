@@ -1,8 +1,6 @@
-from django.shortcuts import get_object_or_404
 from django.http import (
     HttpResponse, HttpResponseBadRequest, HttpResponseRedirect,
 )
-from django.db.models import Q
 
 from .models import Link, SERVER_ADDR
 
@@ -17,12 +15,9 @@ def redirect(request, hash):
 
     hash = str(hash).strip('/')
 
-    url_to_redirect = get_object_or_404(
-        Link,
-        Q(hash=hash) | Q(preferred_url='/'.join([SERVER_ADDR, hash]))
-    )
+    preferred_url = '/'.join([SERVER_ADDR, hash])
 
-    url_to_redirect = url_to_redirect.url
+    url_to_redirect = Link.objects.get_object_or_404(hash, preferred_url)
 
     return HttpResponseRedirect(url_to_redirect)
 
@@ -52,5 +47,8 @@ def make_new_link(request):
             return HttpResponseBadRequest("bad request")
 
     new_url = Link.objects.write_new_link(url, user_ip)
+
+    if not new_url:
+        return HttpResponseBadRequest("wrong url")
 
     return HttpResponse(f"ok;\nold: {url}\nnew: {new_url}")
