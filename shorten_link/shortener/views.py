@@ -1,5 +1,6 @@
 from django.http import (
     HttpResponse, HttpResponseBadRequest, HttpResponseRedirect,
+    JsonResponse,
 )
 
 from .models import Link, SERVER_ADDR
@@ -42,7 +43,7 @@ def make_new_link(request):
             user_ip
         )
         if preferred_url:
-            return HttpResponse(preferred_url)
+            return JsonResponse({"short_url": preferred_url})
         else:
             return HttpResponseBadRequest("bad request")
 
@@ -51,4 +52,4 @@ def make_new_link(request):
     if not new_url:
         return HttpResponseBadRequest("wrong url")
 
-    return HttpResponse(f"ok;\nold: {url}\nnew: {new_url}")
+    return JsonResponse({"short_url": new_url})

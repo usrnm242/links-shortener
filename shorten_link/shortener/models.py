@@ -9,11 +9,10 @@ import re
 
 from django.core.cache import cache
 
-CACHE_TTL = 3600
-
 
 SERVER_ADDR = environ.get("SERVER_ADDR", "http://127.0.0.1:8000")
 hashids = Hashids(salt='Hello, Avito', min_length=2)
+CACHE_TTL = 3600
 
 
 class LinkManager(models.Manager):
@@ -133,15 +132,6 @@ class Link(models.Model):
 
     class Meta:
         db_table = 'links'
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'url': self.url,
-            'hash': self.hash,
-            'preferred_url': self.preferred_url,
-            'author_ip': self.author_ip,
-        }
 
     def __repr__(self):
         return f"ShortLink <{self.url}>"
