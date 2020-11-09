@@ -1,13 +1,59 @@
-Service that makes your links more short ;)
+# Links-Shortener — Make your links shorter.
 
-Used Django, Redis, MySQL, Docker-Compose.
+Проект, посвященный созданию сервиса для сокращения ссылок.
 
-If you want to create new short link:
-    Visit/GET 127.0.0.1/shorten?url=example.com
+Использованы Django, Redis, MySQL, Docker-Compose.
 
-If you want to create new short link with your custom name:
-    Visit/GET 127.0.0.1/shorten?url=example.com&preferred_url=my-example
+<!-- ## Алгоритм
 
-Response is JSON with key 'short_url' and value will be your short link
+Алгоритм основан на представлении числа (ID ссылки в базе данных) в base62.
+* При создании короткой ссылки представляем ID полной ссылки в базе данных ввиде  числа в системе счисления 62.
+* При переходе по короткой ссылке получаем ID с помощью base62.Decode(path) и забираем полный URL из базы данных. -->
 
-After that you can visit that link from JSON response. You'll be redirected to example.com
+## Запуск приложения:
+
+```
+docker-compose up
+```
+
+Приложение доступно на 127.0.0.1
+
+## API
+
+#### 127.0.0.1/shorten?url=example.com
+* `GET` : Создать новую короткую ссылку
+
+Запрос:
+```
+curl -X GET http://127.0.0.1/shorten?url=example.com
+```
+Ответ: `short_url` - URL сайта в формате JSON.
+```
+ {
+   "short_url":"http://127.0.0.1/duhwdu"
+ }
+```
+Или код ошибки с описанием.
+
+
+#### 127.0.0.1/shorten?url=example.com&preferred_url=my-short-link
+* `GET` : Создать новую кастомную короткую ссылку
+
+Запрос:
+```
+curl -X GET 127.0.0.1/shorten?url=example.com&preferred_url=my-short-link
+```
+Ответ: `short_url` - URL сайта в формате JSON.
+```
+ {
+   "short_url":"http://127.0.0.1/duhwdu"
+ }
+```
+
+Или код ошибки с описанием.
+
+
+## Дополнительно
+- Добавлена валидация URL с проверкой корректности ссылки
+- Добавлен кеширующий Redis
+- Добавлена возможность задавать кастомные ссылки, чтобы пользователь мог сделать их человекочитаемыми - http://bit.ly/avito-auto-be
